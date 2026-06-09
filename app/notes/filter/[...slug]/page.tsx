@@ -5,10 +5,19 @@ import {
 } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api";
 import NotesClient from "./Notes.client";
-
+import { Metadata } from "next";
 type Props = {
   params: Promise<{ slug: string[] }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const tag = slug[0] === "all" ? "Всі нотатки" : slug[0];
+  return {
+    title: `NoteHub | ${tag}`,
+    description: `Перегляд нотаток з тегом: ${tag}`,
+  };
+}
 
 export default async function NotesByTagPage({ params }: Props) {
   const { slug } = await params;
