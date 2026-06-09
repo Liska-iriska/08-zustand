@@ -5,16 +5,6 @@ import {
 } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
 import NotePreviewClient from "./NotePreview.client";
-import { Metadata } from "next";
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const note = await fetchNoteById(id);
-  return {
-    title: `Note: ${note.title}`,
-    description: note.content.slice(0, 30),
-  };
-}
 
 type Props = {
   params: Promise<{ id: string }>;

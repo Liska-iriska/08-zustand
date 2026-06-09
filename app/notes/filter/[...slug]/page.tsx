@@ -12,7 +12,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const tag = slug[0] === "all" ? "Всі нотатки" : slug[0];
+  const tag = slug[0] === "all" ? "All Notes" : slug[0];
   return {
     title: `NoteHub | ${tag}`,
     description: `Перегляд нотаток з тегом: ${tag}`,
