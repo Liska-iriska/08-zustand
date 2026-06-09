@@ -1,19 +1,31 @@
 "use client";
 import css from "./NoteForm.module.css";
 import type { NoteTag } from "../../types/note";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { createNote } from "../../lib/api";
 import { useRouter } from "next/navigation";
+import { useNoteDraftStore } from "@/lib/store/noteStore";
 
 export default function NoteForm() {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const { draft, setDraft, clearDraft } = useNoteDraftStore();
+
+  const handleChange = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    setDraft({
+      ...draft,
+      [event.target.name]: event.target.value,
+    });
+  };
 
   const mutation = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      router.push("/notes/all");
+      clearDraft();
+      router.push("/notes/filter/all");
     },
   });
 
@@ -25,11 +37,20 @@ export default function NoteForm() {
     mutation.mutate({ title, content, tag });
   };
 
+  const handleCancel = () => router.push("/notes/filter/all");
+
   return (
     <form action={handleFormAction} className={css.form}>
       <div className={css.formGroup}>
         <label htmlFor="title">Title</label>
-        <input id="title" type="text" name="title" className={css.input} />
+        <input
+          id="title"
+          type="text"
+          name="title"
+          className={css.input}
+          defaultValue={draft?.title}
+          onChange={handleChange}
+        />
       </div>
 
       <div className={css.formGroup}>
@@ -39,12 +60,21 @@ export default function NoteForm() {
           name="content"
           rows={8}
           className={css.textarea}
+          defaultValue={draft?.content}
+          onChange={handleChange}
         />
       </div>
 
       <div className={css.formGroup}>
         <label htmlFor="tag">Tag</label>
-        <select id="tag" name="tag" className={css.select} required>
+        <select
+          id="tag"
+          name="tag"
+          className={css.select}
+          defaultValue={draft?.tag}
+          onChange={handleChange}
+          required
+        >
           <option value="Todo">Todo</option>
           <option value="Work">Work</option>
           <option value="Personal">Personal</option>
@@ -57,7 +87,7 @@ export default function NoteForm() {
         <button
           type="button"
           className={css.cancelButton}
-          onClick={() => router.back()}
+          onClick={handleCancel}
         >
           Cancel
         </button>
@@ -66,7 +96,7 @@ export default function NoteForm() {
           className={css.submitButton}
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? "Creating..." : "Create note"}
+          {mutation.isPending ? "Creating..." : "Create a note"}
         </button>
       </div>
     </form>

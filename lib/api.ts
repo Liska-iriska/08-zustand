@@ -13,6 +13,12 @@ interface HTTPResponse {
   totalPages: number;
 }
 
+export type NewNoteData = {
+  title: string;
+  content: string;
+  tag: NoteTag;
+};
+
 export const fetchNotes = async (
   searchTerm?: string,
   page: number = 1,
@@ -31,11 +37,7 @@ export const fetchNotes = async (
   return response.data;
 };
 
-export const createNote = async (data: {
-  title: string;
-  content: string;
-  tag: NoteTag;
-}): Promise<Note> => {
+export const createNote = async (data: NewNoteData): Promise<Note> => {
   const response = await instance.post<Note>("/notes", data);
   return response.data;
 };
