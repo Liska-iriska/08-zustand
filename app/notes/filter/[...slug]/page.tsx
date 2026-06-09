@@ -15,7 +15,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const tag = slug[0] === "all" ? "All Notes" : slug[0];
   return {
     title: `NoteHub | ${tag}`,
-    description: `Перегляд нотаток з тегом: ${tag}`,
+    description: `Search by tag: ${tag}`,
+    openGraph: {
+      title: `NoteHub | ${tag}`,
+      description: `Search by tag: ${tag}`,
+      url: `https://08-zustand-xi-sage.vercel.app/notes/filter/${tag}`,
+      siteName: "NoteHub",
+      images: [
+        {
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+          width: 1200,
+          height: 630,
+          alt: `${tag}`,
+        },
+      ],
+      type: "website",
+    },
   };
 }
 
